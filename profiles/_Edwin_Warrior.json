@@ -1,0 +1,31 @@
+{
+    "player": "Derick",
+    "chara_name": "Edwin",
+    "chara_class": "Warrior",
+    "proficiency": 2,
+    "AC": 10,
+    "speed": 30,
+    "initiative": 0,
+    "gold": 5,
+    "ability_score": [
+        {
+            "STR": 10
+        },
+        {
+            "Dex": 10
+        },
+        {
+            "CON": 10
+        },
+        {
+            "INT": 10
+        },
+        {
+            "WIS": 10
+        },
+        {
+            "CHA": 10
+        }
+    ],
+    "inventory": []
+}
