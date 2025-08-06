@@ -1,12 +1,5 @@
 import json 
 import os
-
-# Check if the environment is windows or linux
-if os.name == 'nt':
-    save_location = os.path.dirname(__file__) + "\\" + "profiles" + "\\"
-if os.name == 'posix':
-    save_location = os.path.dirname(__file__) + "/" + "profiles" + "/"
-
 # Create basic classes for the characters
 class chara:
     # Constructor to create my class object
@@ -68,15 +61,15 @@ class chara:
     
     def save_chara(self, path = ""):
         if self.__save_file != "":
-            save_location = self.__save_file
-
+            path = self.__save_file
+        else :
+            path = path + self.player + "_" +self.chara_name + "_" + self.chara_class + ".json"
+        
         # save a dictionary values from the object into 
-        if save_location == "":
-            save_location = path + self.player + "_" +self.chara_name + "_" + self.chara_class + ".json"
-        with open(save_location, "w") as json_file:
+        with open(path, "w") as json_file:
             json.dump(vars(self), json_file, indent=4)
 
-        if os.path.isfile(save_location):
+        if os.path.isfile(path):
             return True
         else:
             return False
@@ -110,11 +103,17 @@ class chara:
         self.save_chara()
         return f"{asi_name} is now {self.ability_score[asi_name]}"
         
-        
+# Check if the environment is windows or linux
+if os.name == 'nt':
+    save_location = os.path.dirname(__file__) + "\\" + "profiles" + "\\"
+if os.name == 'posix':
+    save_location = os.path.dirname(__file__) + "/" + "profiles" + "/"
+
 #Test = chara(player = "Derick", chara_name = "Edwin", chara_class = "Warrior")
 #Test.save_chara(path=save_location)
 
 Test = chara(player = "Dedrick", chara_name = "Edwin", chara_class = "Warrior")
-#Test.load_chara(path="/home/agave/Repos/dnd_roguelike/profiles/Dedrick_Edwin_Warrior.json")
+Test.load_chara(path="/home/agave/Repos/dnd_roguelike/profiles/Dedrick_Edwin_Warrior.json")
+#Test.save_chara(path=save_location)
 print(Test)
-#print(Test.update_asi("con","-",3))
+print(Test.update_asi("con","-",3))
