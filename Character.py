@@ -19,9 +19,9 @@ class chara:
         self.speed = 30
         self.initiative = 0
         self.gold = 5
-        self.ability_score = [{"STR":10},{"DEX":10},{"CON":10},{"INT":10},{"WIS":10},{"CHA":10}]
+        self.ability_score = {"STR":10, "DEX":10, "CON":10, "INT":10, "WIS":10, "CHA":10}
         self.inventory = []
-        self.__save_file = save_file
+        self.__save_file = save_file if save_file != "" else ""
 
     # defines how a class gets represented for the user.
     def __str__(self):
@@ -40,11 +40,10 @@ class chara:
 
                 ability_score = item[1]
                 score_count = [len(score) for score in ability_score]
-                max_score_spaces = max(score_count) + 7
+                max_score_spaces = max(score_count) + 5
 
-                for score in ability_score:
+                for score_name, score_value in ability_score.items():
                     # this is how to seperate the name and values of a dictionary.
-                    score_name, score_value = list(score.items())[0]
                     character_sheet.append(f"   {score_name}".ljust(max_score_spaces) + "|  " + f"{score_value}")
                 continue
 
@@ -68,11 +67,12 @@ class chara:
         return iter(vars(self).items())
     
     def save_chara(self, path = ""):
-        if (self.__save_file != "") and (path != ""):
-            path = self.__save_file
+        if self.__save_file != "":
+            save_location = self.__save_file
 
         # save a dictionary values from the object into 
-        save_location = path + self.chara_name + "_" + self.chara_class + ".json"
+        if save_location == "":
+            save_location = path + self.player + "_" +self.chara_name + "_" + self.chara_class + ".json"
         with open(save_location, "w") as json_file:
             json.dump(vars(self), json_file, indent=4)
 
@@ -102,18 +102,19 @@ class chara:
         if not operation in acceptable_operation_values:
             raise ValueError (f"Invalid Operation: {operation} \nPlease use a valid ASI: {acceptable_operation_values}")
 
-        abilitiy_scores = self.ability_score
-        for score in abilitiy_scores:
-            #index = score[0]
-            score_name, score_value = list(score.items())[0]
-            return abilitiy_scores[asi_name]
-            #if asi_name == score_name:
-                #if operation == "-":
-                #    self.ability_score
+        if operation == "+":
+            self.ability_score[asi_name] += value
+        else:
+            self.ability_score[asi_name] -= value
+        
+        self.save_chara()
+        return f"{asi_name} is now {self.ability_score[asi_name]}"
+        
         
 #Test = chara(player = "Derick", chara_name = "Edwin", chara_class = "Warrior")
 #Test.save_chara(path=save_location)
 
-Test = chara(player = "placeholder", chara_name = "placeholder", chara_class = "placeholder")
-Test.load_chara(path="/home/agave/Repos/dnd_roguelike/profiles/_Edwin_Warrior.json")
-print(Test.update_asi("con","-",3))
+Test = chara(player = "Dedrick", chara_name = "Edwin", chara_class = "Warrior")
+#Test.load_chara(path="/home/agave/Repos/dnd_roguelike/profiles/Dedrick_Edwin_Warrior.json")
+print(Test)
+#print(Test.update_asi("con","-",3))
