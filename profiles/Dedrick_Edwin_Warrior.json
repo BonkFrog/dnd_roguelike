@@ -2,11 +2,12 @@
     "player": "Dedrick",
     "chara_name": "Edwin",
     "chara_class": "Warrior",
+    "level": 1,
     "proficiency": 2,
     "AC": 10,
     "speed": 30,
     "initiative": 0,
-    "gold": 5,
+    "gold": 45,
     "ability_score": {
         "STR": 10,
         "DEX": 10,

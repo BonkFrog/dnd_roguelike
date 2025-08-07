@@ -7,6 +7,7 @@ class chara:
         self.player = player
         self.chara_name = chara_name
         self.chara_class = chara_class
+        self.level = 1
         self.proficiency = 2
         self.AC = 10
         self.speed = 30
@@ -102,7 +103,22 @@ class chara:
         
         self.save_chara()
         return f"{asi_name} is now {self.ability_score[asi_name]}"
-        
+    
+    def update_property(self, property, operation, value):
+        if (property == "ability_score") or (property == "inventory"):
+            raise ValueError (f"Invalid Property {property}, please use another one.")
+        if property in ['player','chara_name','chara_class']:
+            setattr(self, property, value)
+            self.save_chara()
+            return {f"{property} is now {value}"}
+        if operation == "+":
+            if not type(value) is int:
+                raise ValueError(f"value must be an integer")
+            current_value = getattr(self, property)
+            setattr(self, property, (current_value + value))
+            self.save_chara()
+            return f"{property} is now {getattr(self, property)}"
+
 # Check if the environment is windows or linux
 if os.name == 'nt':
     save_location = os.path.dirname(__file__) + "\\" + "profiles" + "\\"
@@ -116,4 +132,4 @@ Test = chara(player = "Dedrick", chara_name = "Edwin", chara_class = "Warrior")
 Test.load_chara(path="/home/agave/Repos/dnd_roguelike/profiles/Dedrick_Edwin_Warrior.json")
 #Test.save_chara(path=save_location)
 print(Test)
-print(Test.update_asi("con","-",3))
+print(Test.update_property(property="gold", operation="+",value= 10))
