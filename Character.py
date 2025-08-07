@@ -111,11 +111,16 @@ class chara:
             setattr(self, property, value)
             self.save_chara()
             return {f"{property} is now {value}"}
+        if not type(value) is int:
+            raise ValueError(f"value must be an integer")
         if operation == "+":
-            if not type(value) is int:
-                raise ValueError(f"value must be an integer")
             current_value = getattr(self, property)
             setattr(self, property, (current_value + value))
+            self.save_chara()
+            return f"{property} is now {getattr(self, property)}"
+        else:
+            current_value = getattr(self, property)
+            setattr(self, property, (current_value - value))
             self.save_chara()
             return f"{property} is now {getattr(self, property)}"
 
