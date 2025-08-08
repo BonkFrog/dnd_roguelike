@@ -1,0 +1,14 @@
+Armor,Weight,Armor Type,AC
+Leather,1,Light Armor,11 + Dex
+Padded,1,Light Armor,11 + Dex
+Studded Leather,0.6,Light Armor,12 + Dex
+Breastplate,0.6,Medium Armor,14 + Dex (Max 2)  
+Chain Shirt,1,Medium Armor,13 + Dex (Max 2)
+Half Plate,0.3,Medium Armor,15 + Dex (Max 2)
+Hide,1,Medium Armor,12 + Dex (Max 2)
+Scale mail,0.6,Medium Armor,14 + Dex (Max 2)
+Chain Mail,0.3,Heavy Armor,16
+Ring Mail,0.6,Heavy Armor,14
+Shield,1,Shield,2
+Plate Armor,0.2,Heavy Armor,18
+Robes,1,Light Armor,10
