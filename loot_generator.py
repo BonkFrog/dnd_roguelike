@@ -38,28 +38,54 @@ item_Weights = [lootType['Weight'] for lootType in ItemCategory_Weights]
 
 generated_loot_types = random.choices(itemType, weights=item_Weights, k=3)
 for loot_type in generated_loot_types:
+    if loot_type == "Accessory":
+        accessories = [item for item in reward_db if item['Category'] == "Accessory"]
+        accessories_weights = [float(item['Weight']) for item in accessories]
+        accessory = random.choices(accessories, weights=accessories_weights, k=1)[0]
+        #print(accessory)
+    
+    if loot_type == "Blessing":
+        blessings = [item for item in reward_db if item['Category'] == "Blessing"]
+        blessing_weights = [float(item['Weight']) for item in blessings]
+        blessing = random.choices(blessings, weights=blessing_weights, k=1)[0]
+        #print(blessing)
+
     if loot_type == "Weapon":
         weapons = read_csv(weapon_db)
         random.choice(weapons)
+    
     if loot_type == "Armor":
         armors = read_csv(armors_db)
         armor_weights = [float(armor['Weight']) for armor in armors]
         selected_armor = random.choices(armors, weights=armor_weights, k=1)[0]
         #print(selected_armor)
-    if loot_type == "Blessing":
-        blessings = [item for item in reward_db if item['Category'] == "Blessing"]
-        blessing_weights = [float(item['Weight']) for item in blessings]
-        blessing = random.choices(blessings, weights=blessing_weights, k=1)[0]
-        print(blessing)
 
     if loot_type == "Consumable":
         # Want to randomize between spell scrolls and consumables.
         consumable_type = [{"Category": "Consumable", "Weight": 0.7},{"Category": "Spells", "Weight": 0.6}]
         consumable_weight = [float(item_type["Weight"]) for item_type in consumable_type]
         consumable_type = [item_type["Category"] for item_type in consumable_type]
-        item_type = random.choices(consumable_type, weights=consumable_weight)
-    if loot_type == "Accessory":
-        pass
+        item_type = random.choices(consumable_type, weights=consumable_weight)[0]
+        if item_type == "Consumable":
+            consumables = [item for item in reward_db if item['Category'] == "Consumable"]
+            consumable_weight = [float(item["Weight"]) for item in reward_db if item['Category'] == "Consumable"]
+            selected_consumable = random.choices(consumables, weights=consumable_weight, k=1)[0]
+            #print(selected_consumable)
+        else:
+            spell_weights = [
+                {"Level": 0, "Weight": 0.6},
+                {"Level": 1, "Weight": 0.6},
+                {"Level": 2, "Weight": 0.5},
+                {"Level": 3, "Weight": 0.4},
+                {"Level": 4, "Weight": 0.3},
+                {"Level": 5, "Weight": 0.2},
+                {"Level": 6, "Weight": 0.1},
+                {"Level": 7, "Weight": 0.05},
+                {"Level": 8, "Weight": 0.025},
+                {"Level": 9, "Weight": 0.001}
+            ]
+
+
 
 #print(generated_loot_types)
 # just checking item spread.
