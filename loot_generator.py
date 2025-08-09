@@ -26,7 +26,7 @@ if os.name == 'posix':
 reward_db = read_csv(reward_db_location)
 
 # we can slightly change the weights probably by adding more weight to one but that can be a later mechanic.
-
+# will probably change this into a json file to be imported later instead.
 ItemCategory_Weights = [{"Category": "Weapon", "Weight": 0.4},
     {"Category": "Armor", "Weight": 0.4},
     {"Category": "Blessing", "Weight": 0.2},
@@ -62,6 +62,7 @@ for loot_type in generated_loot_types:
 
     if loot_type == "Consumable":
         # Want to randomize between spell scrolls and consumables.
+        # will probably change this into a json file to be imported later instead.
         consumable_type = [{"Category": "Consumable", "Weight": 0.7},{"Category": "Spells", "Weight": 0.6}]
         consumable_weight = [float(item_type["Weight"]) for item_type in consumable_type]
         consumable_type = [item_type["Category"] for item_type in consumable_type]
@@ -72,19 +73,37 @@ for loot_type in generated_loot_types:
             selected_consumable = random.choices(consumables, weights=consumable_weight, k=1)[0]
             #print(selected_consumable)
         else:
-            spell_weights = [
+            # will probably change this into a json file to be imported later instead.
+            spell_weights_legend = [
                 {"Level": 0, "Weight": 0.6},
-                {"Level": 1, "Weight": 0.6},
-                {"Level": 2, "Weight": 0.5},
-                {"Level": 3, "Weight": 0.4},
-                {"Level": 4, "Weight": 0.3},
+                {"Level": 1, "Weight": 0.7},
+                {"Level": 2, "Weight": 0.6},
+                {"Level": 3, "Weight": 0.5},
+                {"Level": 4, "Weight": 0.4},
                 {"Level": 5, "Weight": 0.2},
                 {"Level": 6, "Weight": 0.1},
                 {"Level": 7, "Weight": 0.05},
                 {"Level": 8, "Weight": 0.025},
                 {"Level": 9, "Weight": 0.001}
             ]
+            # Pull randomized item weights for spell levels
+            spell_weights = [float(spell_type["Weight"]) for spell_type in spell_weights_legend]
+            spell_levels = [spell_type["Level"] for spell_type in spell_weights_legend]
+            selected_spell_level = random.choices(spell_levels, weights=spell_weights, k=1)[0]
+            
+            # Grab a random spell within the chosen spell level
+            spells = read_csv(spell_db)
+            spell_list = [spell for spell in spells if int(spell['level']) == int(selected_spell_level)]
+            selected_spell = random.choice(spell_list)
+            
+            # Add the prefix "Scroll of"
+            spell_scroll_name = "Scroll of " + selected_spell['name']
+            selected_spell['name'] = spell_scroll_name
 
+            # Add Scroll Mechanics in the description.
+            scroll_description = "You can cast the inscribed spell on this scroll with the inscribed spell's cast time. Any class can cast the spell. If the spell requires a ability modifier or saving throw (8 + ability modifier), use the following ability modifier: WIS, CHA, INT. Once casted, the scroll embers away."
+            selected_spell.update({"scroll_description": scroll_description})
+            print(selected_spell)
 
 
 #print(generated_loot_types)
