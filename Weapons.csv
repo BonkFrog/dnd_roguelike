@@ -1,4 +1,4 @@
-Item,Category,Damage,Properties,Mastery,Mastery Definition
+Weapon,Category,Damage,Properties,Mastery,Mastery Definition
 Club,Martial,1d4 Bludgeoning,Light,Slow,"If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction does not exceed 10 feet."
 Dagger,Martial,1d4 Piercing,Finesse |Light |Thrown (Range 20/60),Nick,"When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn."
 Greatclub,Martial,1d8 Bludgeoning,Two-Handed,Push,"If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller."

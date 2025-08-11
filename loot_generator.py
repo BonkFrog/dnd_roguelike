@@ -3,10 +3,70 @@ import csv
 import random
 
 def read_csv(csv_file):
-    with open(csv_file, mode="r",newline="",encoding='utf-8') as reward_csv:
+    # Had to change the encoding to utf-8-sig to remove the \ufeff prefix
+    with open(csv_file, mode="r",newline="",encoding='utf-8-sig') as reward_csv:
         Reader = csv.DictReader(reward_csv)
-        rows = list(Reader)
-    return rows
+        data = list(Reader)
+    return data
+
+def enchant(item, enchant_db):
+    if "Weapon" in item:
+        item_base = "Weapon"
+        item_category = item['Category']
+    if "Armor" in item:
+        item_base = "Armor"
+        item_category = "Armor"
+
+    def add_affix(item, item_base, enchant):
+        if enchant['Affix'] == "Prefix":
+            item[item_base] = enchant['Enchantments'] + " " + item[item_base]
+            item.update({"enchant_description": enchant['Description']})
+        else:
+            item[item_base] = item[item_base] + " " + enchant['Enchantments']
+            item.update({"enchant_description": enchant['Description']})
+        return item
+
+    # will probably change this into a json file to be imported later instead.
+    # I had a 1 in the enchantment weights, it didnt produce the enchantments I wanted.
+    enchant_weights = [0.6, 0.3, 0.1]
+    chosen_weight = random.choices(enchant_weights, weights=enchant_weights, k=1)[0]
+    enchantment_list = read_csv(enchant_db)
+    if chosen_weight != 1:
+        filtered_enchantments = [enchant for enchant in enchantment_list if float(enchant['Weight']) == float(chosen_weight)]
+        enchantment_weights = [float(enchant['Weight']) for enchant in enchantment_list if float(enchant['Weight']) == float(chosen_weight)]
+        chosen_enchantment = random.choices(filtered_enchantments, weights=enchantment_weights, k=1)[0]
+        while chosen_enchantment['Category'] != item_category:
+            chosen_enchantment = random.choices(filtered_enchantments, weights=enchantment_weights, k=1)[0]
+    match chosen_weight:
+        case _ if chosen_weight == 1:
+            item[item_base] = item[item_base] + " +1"
+            return print(item)
+        case _ if chosen_weight == 0.6:
+            Item_Rarity = random.randint(0,1)
+            if Item_Rarity == 0:
+                item[item_base] = item[item_base] + " +1"
+                return print(item)
+            else:
+                add_affix(item, item_base, chosen_enchantment)
+                print(item)
+        case _ if chosen_weight == 0.3:
+            Item_Rarity = random.randint(0,1)
+            if Item_Rarity == 0:
+                item[item_base] = item[item_base] + " +2"                    
+                return print(item)
+            if Item_Rarity == 1:
+                add_affix(item, item_base, chosen_enchantment)
+                item[item_base] = item[item_base] + " +1"
+                return print(item)
+        case _ if chosen_weight == 0.1:
+            Item_Rarity = random.randint(0,1)
+            if Item_Rarity == 0:
+                item[item_base] = item[item_base] + " +3"                    
+                return print(item)
+            if Item_Rarity == 1:
+                add_affix(item, item_base, chosen_enchantment)
+                item[item_base] = item[item_base] + " +2"
+                return print(item)
 
 # Parameters set for loot generation.
 if os.name == 'nt':
@@ -52,14 +112,16 @@ for loot_type in generated_loot_types:
 
     if loot_type == "Weapon":
         weapons = read_csv(weapon_db)
-        random.choice(weapons)
-    
+        selected_weapon = random.choice(weapons)
+        #print(selected_weapon)
+        enchant(selected_weapon, enchantments_db)
+
     if loot_type == "Armor":
         armors = read_csv(armors_db)
         armor_weights = [float(armor['Weight']) for armor in armors]
         selected_armor = random.choices(armors, weights=armor_weights, k=1)[0]
         #print(selected_armor)
-
+        enchant(selected_armor, enchantments_db)
     if loot_type == "Consumable":
         # Want to randomize between spell scrolls and consumables.
         # will probably change this into a json file to be imported later instead.
@@ -103,19 +165,4 @@ for loot_type in generated_loot_types:
             # Add Scroll Mechanics in the description.
             scroll_description = "You can cast the inscribed spell on this scroll with the inscribed spell's cast time. Any class can cast the spell. If the spell requires a ability modifier or saving throw (8 + ability modifier), use the following ability modifier: WIS, CHA, INT. Once casted, the scroll embers away."
             selected_spell.update({"scroll_description": scroll_description})
-            print(selected_spell)
-
-
-#print(generated_loot_types)
-# just checking item spread.
-#for i in range(0, 100):
-#    print(random.choices(itemType, weights=item_Weights, k=3))
-
-
-
-#for loot_type in generated_loot_types:
-
-
-
-#for items in enumerate(reward_db):
-#    print(items[1]['Weight'])
+           #print(selected_spell)
