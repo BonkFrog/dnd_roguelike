@@ -1,5 +1,7 @@
 import json 
 import os
+import loot_generator as loot
+
 # Create basic classes for the characters
 class chara:
     # Constructor to create my class object
@@ -16,6 +18,7 @@ class chara:
         self.ability_score = {"STR":10, "DEX":10, "CON":10, "INT":10, "WIS":10, "CHA":10}
         self.inventory = []
         self.__save_file = save_file if save_file != "" else ""
+        self.__save_item_choice = []
 
     # defines how a class gets represented for the user.
     def __str__(self):
@@ -124,6 +127,11 @@ class chara:
             self.save_chara()
             return f"{property} is now {getattr(self, property)}"
 
+    def save_choice(self, items):
+        self.__save_item_choice.append(items)
+        self.save_chara()
+        return self
+
 # Check if the environment is windows or linux
 if os.name == 'nt':
     save_location = os.path.dirname(__file__) + "\\" + "profiles" + "\\"
@@ -136,5 +144,12 @@ if os.name == 'posix':
 Test = chara(player = "Dedrick", chara_name = "Edwin", chara_class = "Warrior")
 Test.load_chara(path="/home/agave/Repos/dnd_roguelike/profiles/Dedrick_Edwin_Warrior.json")
 #Test.save_chara(path=save_location)
-print(Test)
-print(Test.update_property(property="gold", operation="+",value= 10))
+g_loots = loot.generate(3)
+#for g_loot in g_loots:
+#    print(g_loot)
+#    input("")
+
+Test.save_choice(g_loots)
+#print(Test.save_choice(loot))
+
+#print(Test.update_property(property="gold", operation="+",value= 10))
