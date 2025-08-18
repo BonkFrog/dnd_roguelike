@@ -9,7 +9,12 @@ def read_csv(csv_file):
         data = list(Reader)
     return data
 
-def enchant(item, enchant_db):
+def enchant_item(item):
+    if os.name == 'nt':
+        enchantments_db = os.path.dirname(__file__) + "\\csvs\\Enchantments.csv"
+    if os.name == 'posix':
+        enchantments_db = os.path.dirname(__file__) + "/csvs/Enchantments.csv"
+        
     if "Weapon" == item['Category']:
         item_category = item['Weapon_Type']
     if "Armor" == item['Category']:
@@ -28,7 +33,7 @@ def enchant(item, enchant_db):
     # I had a 1 in the enchantment weights, it didnt produce the enchantments I wanted.
     enchant_weights = [0.6, 0.3, 0.1]
     chosen_weight = random.choices(enchant_weights, weights=enchant_weights, k=1)[0]
-    enchantment_list = read_csv(enchant_db)
+    enchantment_list = read_csv(enchantments_db)
 
     if chosen_weight != 1:
 
@@ -69,19 +74,150 @@ def enchant(item, enchant_db):
                 item['name'] = item['name'] + " +2"
                 return item
 
-def generate(k=3):
+def grab_spell_scroll():
+    if os.name == 'nt':
+        spell_db = os.path.dirname(__file__) + "\\csvs\\Spells.csv"
+    if os.name == 'posix':
+        spell_db = os.path.dirname(__file__) + "/csvs/Spells.csv"
+
+    # will probably change this into a json file to be imported later instead.
+    spell_weights_legend = [
+        {"Level": 0, "Weight": 0.6},
+        {"Level": 1, "Weight": 0.7},
+        {"Level": 2, "Weight": 0.6},
+        {"Level": 3, "Weight": 0.5},
+        {"Level": 4, "Weight": 0.4},
+        {"Level": 5, "Weight": 0.2},
+        {"Level": 6, "Weight": 0.1},
+        {"Level": 7, "Weight": 0.05},
+        {"Level": 8, "Weight": 0.025},
+        {"Level": 9, "Weight": 0.001}
+    ]
+    # Pull randomized item weights for spell levels
+    spell_weights = [float(spell_type["Weight"]) for spell_type in spell_weights_legend]
+    spell_levels = [spell_type["Level"] for spell_type in spell_weights_legend]
+    selected_spell_level = random.choices(spell_levels, weights=spell_weights, k=1)[0]
+
+    # Grab a random spell within the chosen spell level
+    spells = read_csv(spell_db)
+    spell_list = [spell for spell in spells if int(spell['level']) == int(selected_spell_level)]
+    selected_spell = random.choice(spell_list)
+
+    # Add the prefix "Scroll of"
+    spell_scroll_name = "Scroll of " + selected_spell['name']
+    selected_spell['name'] = spell_scroll_name
+
+    # Add Scroll Mechanics in the description.
+    scroll_description = "You can cast the inscribed spell on this scroll with the inscribed spell's cast time. Any class can cast the spell. If the spell requires a ability modifier or saving throw (8 + ability modifier), use the following ability modifier: WIS, CHA, INT. Once casted, the scroll embers away."
+    selected_spell.update({"scroll_description": scroll_description})
+    return selected_spell
+
+def grab_consumable():
+    #This function does not include spell scrolls despite both being a consumable.
+    if os.name == 'nt':
+        reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
+    if os.name == 'posix':
+        reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
+
+    reward_db = read_csv(reward_db_location)
+
+    consumables = [item for item in reward_db if item['Category'] == "Consumable"]
+    consumable_weight = [float(item["Weight"]) for item in reward_db if item['Category'] == "Consumable"]
+    selected_consumable = random.choices(consumables, weights=consumable_weight, k=1)[0]
+    return selected_consumable
+
+def generate_blessings(k=3):
+    if os.name == 'nt':
+        reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
+    if os.name == 'posix':
+        reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
+    for i in range(0,k):
+        pass
+
+def generate_consumables(k=3,mix=True,consumable=False,spell=False):
+    # Set parameters
+    list_of_loot = []
+
+    if consumable == True and spell == True:
+        raise ValueError(f"Both spell and consumable parameters cannot be true.")
+    
+    # This sets mix to false if any of the other parameters are true.
+    if ((consumable == True) or (spell == True)):
+        mix = False
+
+    for i in range(0,k):
+        if mix == True:
+            consumable_type = [{"Category": "Consumable", "Weight": 0.7},{"Category": "Spells", "Weight": 0.6}]
+            consumable_weight = [float(item_type["Weight"]) for item_type in consumable_type]
+            consumable_type = [item_type["Category"] for item_type in consumable_type]
+            item_type = random.choices(consumable_type, weights=consumable_weight)[0]
+            if item_type == "Consumable":
+                list_of_loot.append(grab_consumable())
+            else:
+                list_of_loot.append(grab_spell_scroll())
+        if consumable == True:
+            list_of_loot.append(grab_consumable())
+        if spell == True:
+            list_of_loot.append(grab_spell_scroll())
+    return list_of_loot
+
+def generate_weapons(k=1,enchant=False):
+    if os.name == 'nt':
+        weapon_db = os.path.dirname(__file__) + "\\csvs\\Weapons.csv"
+    if os.name == 'posix':
+        weapon_db = os.path.dirname(__file__) + "/csvs/Weapons.csv"
+    
+    weapons = read_csv(weapon_db)
+
+    if k == 1:
+        selected_weapon = random.choice(weapons)
+        if enchant == True:
+            return enchant_item(selected_weapon)
+        return selected_weapon
+
+    list_of_loot = [] 
+    for i in range(0,k):
+        selected_weapon = random.choice(weapons)
+        if enchant == True: 
+            list_of_loot.append(enchant_item(selected_weapon))
+        else:
+            list_of_loot.append(enchant_item(selected_weapon))
+    return list_of_loot
+
+def generate_armors(k=1,enchant=False):
+    if os.name == 'nt':
+        armors_db = os.path.dirname(__file__) + "\\csvs\\Armors.csv"
+    if os.name == 'posix':
+        armors_db = os.path.dirname(__file__) + "/csvs/Armors.csv"
+
+    armors = read_csv(armors_db)
+    if k == 1:
+        selected_armors = random.choice(armors)
+        if enchant == True:
+            return enchant_item(selected_armors)
+        return selected_armors
+
+    list_of_loot = [] 
+    for i in range(0,k):
+        selected_armors = random.choice(armors)
+        if enchant == True: 
+            list_of_loot.append(enchant_item(selected_armors))
+        else:
+            list_of_loot.append(enchant_item(selected_armors))
+    return list_of_loot
+
+# Milestone: Lets add some character level logic in next time. because this shit is way over powered for lower levels!
+def generate_loot(k=3):
 # Parameters set for loot generation.
     if os.name == 'nt':
         reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
         weapon_db = os.path.dirname(__file__) + "\\csvs\\Weapons.csv"
-        spell_db = os.path.dirname(__file__) + "\\csvs\\Spells.csv"
         armors_db = os.path.dirname(__file__) + "\\csvs\\Armors.csv"
         enchantments_db = os.path.dirname(__file__) + "\\csvs\\Enchantments.csv"
 
     if os.name == 'posix':
         reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
         weapon_db = os.path.dirname(__file__) + "/csvs/Weapons.csv"
-        spell_db = os.path.dirname(__file__) + "/csvs/Spells.csv"
         armors_db = os.path.dirname(__file__) + "/csvs/Armors.csv"
         enchantments_db = os.path.dirname(__file__) + "/csvs/Enchantments.csv"
 
@@ -114,15 +250,10 @@ def generate(k=3):
             list_of_loot.append(blessing)
 
         if loot_type == "Weapon":
-            weapons = read_csv(weapon_db)
-            selected_weapon = random.choice(weapons)
-            list_of_loot.append(enchant(selected_weapon, enchantments_db))
+            list_of_loot.append(generate_weapons(k=1, enchant=True))
 
         if loot_type == "Armor":
-            armors = read_csv(armors_db)
-            armor_weights = [float(armor['Weight']) for armor in armors]
-            selected_armor = random.choices(armors, weights=armor_weights, k=1)[0]
-            list_of_loot.append(enchant(selected_armor, enchantments_db))
+            list_of_loot.append(generate_armors(k=1, enchant=True))
 
         if loot_type == "Consumable":
             # Want to randomize between spell scrolls and consumables.
@@ -132,40 +263,11 @@ def generate(k=3):
             consumable_type = [item_type["Category"] for item_type in consumable_type]
             item_type = random.choices(consumable_type, weights=consumable_weight)[0]
             if item_type == "Consumable":
-                consumables = [item for item in reward_db if item['Category'] == "Consumable"]
-                consumable_weight = [float(item["Weight"]) for item in reward_db if item['Category'] == "Consumable"]
-                selected_consumable = random.choices(consumables, weights=consumable_weight, k=1)[0]
-                list_of_loot.append(selected_consumable)
+                list_of_loot.append(grab_consumable())
             else:
-                # will probably change this into a json file to be imported later instead.
-                spell_weights_legend = [
-                    {"Level": 0, "Weight": 0.6},
-                    {"Level": 1, "Weight": 0.7},
-                    {"Level": 2, "Weight": 0.6},
-                    {"Level": 3, "Weight": 0.5},
-                    {"Level": 4, "Weight": 0.4},
-                    {"Level": 5, "Weight": 0.2},
-                    {"Level": 6, "Weight": 0.1},
-                    {"Level": 7, "Weight": 0.05},
-                    {"Level": 8, "Weight": 0.025},
-                    {"Level": 9, "Weight": 0.001}
-                ]
-                # Pull randomized item weights for spell levels
-                spell_weights = [float(spell_type["Weight"]) for spell_type in spell_weights_legend]
-                spell_levels = [spell_type["Level"] for spell_type in spell_weights_legend]
-                selected_spell_level = random.choices(spell_levels, weights=spell_weights, k=1)[0]
-
-                # Grab a random spell within the chosen spell level
-                spells = read_csv(spell_db)
-                spell_list = [spell for spell in spells if int(spell['level']) == int(selected_spell_level)]
-                selected_spell = random.choice(spell_list)
-
-                # Add the prefix "Scroll of"
-                spell_scroll_name = "Scroll of " + selected_spell['name']
-                selected_spell['name'] = spell_scroll_name
-
-                # Add Scroll Mechanics in the description.
-                scroll_description = "You can cast the inscribed spell on this scroll with the inscribed spell's cast time. Any class can cast the spell. If the spell requires a ability modifier or saving throw (8 + ability modifier), use the following ability modifier: WIS, CHA, INT. Once casted, the scroll embers away."
-                selected_spell.update({"scroll_description": scroll_description})
-                list_of_loot.append(selected_spell)
+                list_of_loot.append(grab_spell_scroll())
     return list_of_loot
+
+
+# To do 
+# Finish the generate blessing and generate accessories functions.
