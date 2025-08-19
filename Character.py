@@ -4,6 +4,19 @@ import loot_generator as loot
 
 # Create basic classes for the characters
 class chara:
+
+    # This spaces out the text in a nice format.
+    # just make it accept a tuple, its just easier that way.
+    def spacing(self, tuple_array, spacing = 2):
+        str_count = [len(item[0]) for item in tuple_array]
+        
+        text_array = []
+        for item in tuple_array:
+            spacing = item[-1]
+            max_spaces = max(str_count) + spacing
+            text_array.append(f"{item[0]}".ljust(max_spaces) + "|  " + f"{item[1]}")
+        return text_array
+               
     # Constructor to create my class object
     def __init__(self, player = "", chara_name = "", chara_class = "", save_file = ""):
         self.player = player
@@ -22,41 +35,24 @@ class chara:
 
     # defines how a class gets represented for the user.
     def __str__(self):
-        # Get the max count for the property names string len and add 2 spaces 
-        str_count = [len(item[0]) for item in self]
-        max_spaces = max(str_count) + 2 
-        
-        character_sheet = []
-        
-        for item in self:
-            
-            # Same thing for ability score cause that is nested dictionary, we want to print it nicely.
-            if item[0] == "ability_score":
-                # print out the ability score part so it looks nicer.
-                character_sheet.append(f"{item[0]}".ljust(max_spaces))
-
-                ability_score = item[1]
-                score_count = [len(score) for score in ability_score]
-                max_score_spaces = max(score_count) + 5
-
-                for score_name, score_value in ability_score.items():
-                    # this is how to seperate the name and values of a dictionary.
-                    character_sheet.append(f"   {score_name}".ljust(max_score_spaces) + "|  " + f"{score_value}")
+        character_info = [(key, value) for key, value in self]
+        character_info = []
+        for key, value in self:
+            if key == 'ability_score':
+                character_info.append((key, "", 2))
+                for score_name, score_va1ue in value.items():
+                    score_name = "  " + score_name
+                    ability_score_tuple = (score_name, score_va1ue, -5)
+                    character_info.append(ability_score_tuple)
                 continue
-
-            # Do later when I implement loot.
-            if item[0] == "inventory":
-                #print(True)
-                pass
             
-            # Makes it so we dont print any of the hidden classes.
-            if item[0].startswith("_"):
+            if key.startswith("_"):
                 continue
+            base_character_tuple = (key, value, 2)
+            character_info.append(base_character_tuple)
 
-            character_sheet.append(f"{item[0]}".ljust(max_spaces) + "|  " + f"{item[1]}")
-        
-        # Chat recommended this way to iterate a print. idk if there are better ways but this is an easy one to return a string.
-        return "\n".join([line for line in character_sheet])
+        new_list = self.spacing(character_info)
+        return "\n".join([line for line in new_list])
 
     # This is how to may my object iterable
     def __iter__(self):
@@ -128,9 +124,21 @@ class chara:
             return f"{property} is now {getattr(self, property)}"
 
     def save_choice(self, items):
-        self.__save_item_choice.append(items)
+        if len(self.__save_item_choice) > 3:
+            raise ValueError (f"{self.chara_name} still has to select loot")
+        for item in items:
+            self.__save_item_choice.append(item)
         self.save_chara()
         return self
+    
+    def select_choice(self):
+        selectable_choices = []
+        i = 1
+        for choice in self.__save_item_choice:
+            choice_format = f"{i}: {choice['name']} | {choice['Category']}"
+            selectable_choices.append(choice_format)
+            i += 1
+        return "\n".join([choice for choice in selectable_choices])
 
 # Check if the environment is windows or linux
 if os.name == 'nt':
@@ -144,12 +152,13 @@ if os.name == 'posix':
 Test = chara(player = "Dedrick", chara_name = "Edwin", chara_class = "Warrior")
 Test.load_chara(path="/home/agave/Repos/dnd_roguelike/profiles/Dedrick_Edwin_Warrior.json")
 #Test.save_chara(path=save_location)
-g_loots = loot.generate(3)
+g_loots = loot.generate_loot(3)
+print(Test)
 #for g_loot in g_loots:
 #    print(g_loot)
-#    input("")
+#
 
-Test.save_choice(g_loots)
-#print(Test.save_choice(loot))
-
+#Test.save_choice(g_loots)
+#Test.save_chara(path=save_location)
+#print(Test.select_choice())
 #print(Test.update_property(property="gold", operation="+",value= 10))
