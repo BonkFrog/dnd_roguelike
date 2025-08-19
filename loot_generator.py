@@ -131,8 +131,34 @@ def generate_blessings(k=3):
         reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
     if os.name == 'posix':
         reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
+    
+    list_of_loot = []
+    reward_db = read_csv(reward_db_location)
+
     for i in range(0,k):
-        pass
+        blessings = [item for item in reward_db if item['Category'] == "Blessing"]
+        blessings_weight = [float(item["Weight"]) for item in reward_db if item['Category'] == "Blessing"]
+        selected_blessing = random.choices(blessings, weights=blessings_weight, k=1)[0]
+        list_of_loot.append(selected_blessing)
+    
+    return list_of_loot
+
+def generate_accessories(k=3):
+    if os.name == 'nt':
+        reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
+    if os.name == 'posix':
+        reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
+    
+    list_of_loot = []
+    reward_db = read_csv(reward_db_location)
+
+    for i in range(0,k):
+        accessory_list = [item for item in reward_db if item['Category'] == "Accessory"]
+        accessory_weight = [float(item["Weight"]) for item in reward_db if item['Category'] == "Accessory"]
+        selected_accessory = random.choices(accessory_list, weights=accessory_weight, k=1)[0]
+        list_of_loot.append(selected_accessory)
+    
+    return list_of_loot
 
 def generate_consumables(k=3,mix=True,consumable=False,spell=False):
     # Set parameters
@@ -268,6 +294,3 @@ def generate_loot(k=3):
                 list_of_loot.append(grab_spell_scroll())
     return list_of_loot
 
-
-# To do 
-# Finish the generate blessing and generate accessories functions.
