@@ -7,7 +7,8 @@ class chara:
 
     # This spaces out the text in a nice format.
     # just make it accept a tuple, its just easier that way.
-    def spacing(self, tuple_array, spacing = 2):
+    # the tuple format (the property name, property value, int(spacing count))
+    def spacing(self, tuple_array):
         str_count = [len(item[0]) for item in tuple_array]
         
         text_array = []
@@ -131,14 +132,17 @@ class chara:
         self.save_chara()
         return self
     
+    # when this becomes a discord bot, i know the input isnt just going to work.
     def select_choice(self):
         selectable_choices = []
         i = 1
         for choice in self.__save_item_choice:
-            choice_format = f"{i}: {choice['name']} | {choice['Category']}"
+            choice_format = (f"{i}: {choice['name']}", choice['Category'], 2)
             selectable_choices.append(choice_format)
             i += 1
-        return "\n".join([choice for choice in selectable_choices])
+        formated_selectable_choices = self.spacing(selectable_choices)
+        print("\n".join([choice for choice in formated_selectable_choices]))
+        input("Select Item #")
 
 # Check if the environment is windows or linux
 if os.name == 'nt':
@@ -153,12 +157,19 @@ Test = chara(player = "Dedrick", chara_name = "Edwin", chara_class = "Warrior")
 Test.load_chara(path="/home/agave/Repos/dnd_roguelike/profiles/Dedrick_Edwin_Warrior.json")
 #Test.save_chara(path=save_location)
 g_loots = loot.generate_loot(3)
-print(Test)
 #for g_loot in g_loots:
 #    print(g_loot)
 #
 
 #Test.save_choice(g_loots)
 #Test.save_chara(path=save_location)
-#print(Test.select_choice())
+print(Test.select_choice())
 #print(Test.update_property(property="gold", operation="+",value= 10))
+
+
+
+
+
+####
+# Make the choice tab able to add items. maybe even add a function to add custom items but yeah later perhaps.
+####
