@@ -1,0 +1,7 @@
+[
+    {"Category": "Weapon", "Weight": 0.4},
+    {"Category": "Armor", "Weight": 0.4},
+    {"Category": "Blessing", "Weight": 0.2},
+    {"Category": "Consumable", "Weight": 0.6},
+    {"Category": "Accessory", "Weight": 0.5}
+]

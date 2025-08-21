@@ -1,0 +1,153 @@
+[
+    {
+        "Level": 1,
+        "Weights": [
+            {"Level": 0, "Weight": 1, "Amount": 3},
+            {"Level": 1, "Weight": 0.6, "Amount": 2},
+            {"Level": 2, "Weight": 0.3, "Amount": 1},
+            {"Level": 3, "Weight": 0, "Amount": 0},
+            {"Level": 4, "Weight": 0, "Amount": 0},
+            {"Level": 5, "Weight": 0, "Amount": 0},
+            {"Level": 6, "Weight": 0, "Amount": 0},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 2,
+        "Weights": [
+            {"Level": 0, "Weight": 0.6, "Amount": 3},
+            {"Level": 1, "Weight": 1, "Amount": 2},
+            {"Level": 2, "Weight": 0.3, "Amount": 1},
+            {"Level": 3, "Weight": 0, "Amount": 0},
+            {"Level": 4, "Weight": 0, "Amount": 0},
+            {"Level": 5, "Weight": 0, "Amount": 0},
+            {"Level": 6, "Weight": 0, "Amount": 0},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 3,
+        "Weights": [
+            {"Level": 0, "Weight": 0.3, "Amount": 3},
+            {"Level": 1, "Weight": 0.4, "Amount": 3},
+            {"Level": 2, "Weight": 0.6, "Amount": 2},
+            {"Level": 3, "Weight": 0.1, "Amount": 1},
+            {"Level": 4, "Weight": 0, "Amount": 0},
+            {"Level": 5, "Weight": 0, "Amount": 0},
+            {"Level": 6, "Weight": 0, "Amount": 0},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 4,
+        "Weights": [
+            {"Level": 0, "Weight": 0.1, "Amount": 3},
+            {"Level": 1, "Weight": 0.3, "Amount": 3},
+            {"Level": 2, "Weight": 0.8, "Amount": 2},
+            {"Level": 3, "Weight": 0.2, "Amount": 1},
+            {"Level": 4, "Weight": 0, "Amount": 0},
+            {"Level": 5, "Weight": 0, "Amount": 0},
+            {"Level": 6, "Weight": 0, "Amount": 0},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 5,
+        "Weights": [
+            {"Level": 0, "Weight": 0, "Amount": 0},
+            {"Level": 1, "Weight": 0.2, "Amount": 3},
+            {"Level": 2, "Weight": 0.4, "Amount": 3},
+            {"Level": 3, "Weight": 0.6, "Amount": 2},
+            {"Level": 4, "Weight": 0.1, "Amount": 1},
+            {"Level": 5, "Weight": 0, "Amount": 0},
+            {"Level": 6, "Weight": 0, "Amount": 0},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 6,
+        "Weights": [
+            {"Level": 0, "Weight": 0, "Amount": 0},
+            {"Level": 1, "Weight": 0.1, "Amount": 3},
+            {"Level": 2, "Weight": 0.3, "Amount": 3},
+            {"Level": 3, "Weight": 0.8, "Amount": 2},
+            {"Level": 4, "Weight": 0.2, "Amount": 1},
+            {"Level": 5, "Weight": 0, "Amount": 0},
+            {"Level": 6, "Weight": 0, "Amount": 0},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 7,
+        "Weights": [
+            {"Level": 0, "Weight": 0, "Amount": 0},
+            {"Level": 1, "Weight": 0, "Amount": 0},
+            {"Level": 2, "Weight": 0.3, "Amount": 3},
+            {"Level": 3, "Weight": 0.4, "Amount": 3},
+            {"Level": 4, "Weight": 0.6, "Amount": 2},
+            {"Level": 5, "Weight": 0.1, "Amount": 1},
+            {"Level": 6, "Weight": 0, "Amount": 0},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 8,
+        "Weights": [
+            {"Level": 0, "Weight": 0, "Amount": 0},
+            {"Level": 1, "Weight": 0, "Amount": 0},
+            {"Level": 2, "Weight": 0.1, "Amount": 3},
+            {"Level": 3, "Weight": 0.3, "Amount": 3},
+            {"Level": 4, "Weight": 0.8, "Amount": 2},
+            {"Level": 5, "Weight": 0.2, "Amount": 1},
+            {"Level": 6, "Weight": 0, "Amount": 0},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 9,
+        "Weights": [
+            {"Level": 0, "Weight": 0, "Amount": 0},
+            {"Level": 1, "Weight": 0, "Amount": 0},
+            {"Level": 2, "Weight": 0, "Amount": 0},
+            {"Level": 3, "Weight": 0.3, "Amount": 3},
+            {"Level": 4, "Weight": 0.4, "Amount": 3},
+            {"Level": 5, "Weight": 0.6, "Amount": 2},
+            {"Level": 6, "Weight": 0.1, "Amount": 1},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    },
+    {
+        "Level": 10,
+        "Weights": [
+            {"Level": 0, "Weight": 0, "Amount": 0},
+            {"Level": 1, "Weight": 0, "Amount": 0},
+            {"Level": 2, "Weight": 0, "Amount": 0},
+            {"Level": 3, "Weight": 0.1, "Amount": 3},
+            {"Level": 4, "Weight": 0.3, "Amount": 3},
+            {"Level": 5, "Weight": 0.8, "Amount": 2},
+            {"Level": 6, "Weight": 0.2, "Amount": 1},
+            {"Level": 7, "Weight": 0, "Amount": 0},
+            {"Level": 8, "Weight": 0, "Amount": 0},
+            {"Level": 9, "Weight": 0, "Amount": 0}
+        ]
+    }
+]
+
