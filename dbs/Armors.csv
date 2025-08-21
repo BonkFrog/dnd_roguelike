@@ -1,0 +1,14 @@
+name,Category,Rarity,armor_type,AC
+Leather,Armor,Common,Light Armor,11 + Dex
+Padded,Armor,Common,Light Armor,11 + Dex
+Studded Leather,Armor,Uncommon,Light Armor,12 + Dex
+Breastplate,Armor,Uncommon,Medium Armor,14 + Dex (Max 2)  
+Chain Shirt,Armor,Common,Medium Armor,13 + Dex (Max 2)
+Half Plate,Armor,Rare,Medium Armor,15 + Dex (Max 2)
+Hide,Armor,Common,Medium Armor,12 + Dex (Max 2)
+Scale mail,Armor,Uncommon,Medium Armor,14 + Dex (Max 2)
+Chain Mail,Armor,Rare,Heavy Armor,16
+Ring Mail,Armor,Uncommon,Heavy Armor,14
+Shield,Armor,Common,Shield,2
+Plate Armor,Armor,Legendary,Heavy Armor,18
+Robes,Armor,Common,Light Armor,10
