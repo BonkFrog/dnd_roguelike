@@ -1,6 +1,7 @@
 import os
 import csv
 import random
+import json
 
 def read_csv(csv_file):
     # Had to change the encoding to utf-8-sig to remove the \ufeff prefix
@@ -9,11 +10,16 @@ def read_csv(csv_file):
         data = list(Reader)
     return data
 
+def read_json(json_file_path):
+    with open(json_file_path, 'r') as json_file:
+        json_data = json.load(json_file)
+    return json_data
+
 def enchant_item(item):
     if os.name == 'nt':
-        enchantments_db = os.path.dirname(__file__) + "\\csvs\\Enchantments.csv"
+        enchantments_db = os.path.dirname(__file__) + "\\dbs\\Enchantments.csv"
     if os.name == 'posix':
-        enchantments_db = os.path.dirname(__file__) + "/csvs/Enchantments.csv"
+        enchantments_db = os.path.dirname(__file__) + "/dbs/Enchantments.csv"
         
     if "Weapon" == item['Category']:
         item_category = item['Weapon_Type']
@@ -76,9 +82,9 @@ def enchant_item(item):
 
 def grab_spell_scroll():
     if os.name == 'nt':
-        spell_db = os.path.dirname(__file__) + "\\csvs\\Spells.csv"
+        spell_db = os.path.dirname(__file__) + "\\dbs\\Spells.csv"
     if os.name == 'posix':
-        spell_db = os.path.dirname(__file__) + "/csvs/Spells.csv"
+        spell_db = os.path.dirname(__file__) + "/dbs/Spells.csv"
 
     # will probably change this into a json file to be imported later instead.
     spell_weights_legend = [
@@ -115,9 +121,9 @@ def grab_spell_scroll():
 def grab_consumable():
     #This function does not include spell scrolls despite both being a consumable.
     if os.name == 'nt':
-        reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
+        reward_db_location = os.path.dirname(__file__) + "\\dbs\\Reward_DB.csv"
     if os.name == 'posix':
-        reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
+        reward_db_location = os.path.dirname(__file__) + "/dbs/Reward_DB.csv"
 
     reward_db = read_csv(reward_db_location)
 
@@ -128,9 +134,9 @@ def grab_consumable():
 
 def generate_blessings(k=3):
     if os.name == 'nt':
-        reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
+        reward_db_location = os.path.dirname(__file__) + "\\dbs\\Reward_DB.csv"
     if os.name == 'posix':
-        reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
+        reward_db_location = os.path.dirname(__file__) + "/dbs/Reward_DB.csv"
     
     list_of_loot = []
     reward_db = read_csv(reward_db_location)
@@ -145,9 +151,9 @@ def generate_blessings(k=3):
 
 def generate_accessories(k=3):
     if os.name == 'nt':
-        reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
+        reward_db_location = os.path.dirname(__file__) + "\\dbs\\Reward_DB.csv"
     if os.name == 'posix':
-        reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
+        reward_db_location = os.path.dirname(__file__) + "/dbs/Reward_DB.csv"
     
     list_of_loot = []
     reward_db = read_csv(reward_db_location)
@@ -189,9 +195,9 @@ def generate_consumables(k=3,mix=True,consumable=False,spell=False):
 
 def generate_weapons(k=1,enchant=False):
     if os.name == 'nt':
-        weapon_db = os.path.dirname(__file__) + "\\csvs\\Weapons.csv"
+        weapon_db = os.path.dirname(__file__) + "\\dbs\\Weapons.csv"
     if os.name == 'posix':
-        weapon_db = os.path.dirname(__file__) + "/csvs/Weapons.csv"
+        weapon_db = os.path.dirname(__file__) + "/dbs/Weapons.csv"
     
     weapons = read_csv(weapon_db)
 
@@ -212,9 +218,9 @@ def generate_weapons(k=1,enchant=False):
 
 def generate_armors(k=1,enchant=False):
     if os.name == 'nt':
-        armors_db = os.path.dirname(__file__) + "\\csvs\\Armors.csv"
+        armors_db = os.path.dirname(__file__) + "\\dbs\\Armors.csv"
     if os.name == 'posix':
-        armors_db = os.path.dirname(__file__) + "/csvs/Armors.csv"
+        armors_db = os.path.dirname(__file__) + "/dbs/Armors.csv"
 
     armors = read_csv(armors_db)
     if k == 1:
@@ -233,30 +239,23 @@ def generate_armors(k=1,enchant=False):
     return list_of_loot
 
 # Milestone: Lets add some character level logic in next time. because this shit is way over powered for lower levels!
-def generate_loot(k=3):
+def generate_loot(player_level=1, k=3):
 # Parameters set for loot generation.
     if os.name == 'nt':
-        reward_db_location = os.path.dirname(__file__) + "\\csvs\\Reward_DB.csv"
-        weapon_db = os.path.dirname(__file__) + "\\csvs\\Weapons.csv"
-        armors_db = os.path.dirname(__file__) + "\\csvs\\Armors.csv"
-        enchantments_db = os.path.dirname(__file__) + "\\csvs\\Enchantments.csv"
-
+        reward_db_location = os.path.dirname(__file__) + "\\dbs\\Reward_DB.csv"
+        item_category_weights_location = os.path.dirname(__file__) + "\\configs\\item_category_drop_rates.json"
+        player_level_weights_location = os.path.dirname(__file__) + "\\configs\\loot_level_weights.json"
+    
     if os.name == 'posix':
-        reward_db_location = os.path.dirname(__file__) + "/csvs/Reward_DB.csv"
-        weapon_db = os.path.dirname(__file__) + "/csvs/Weapons.csv"
-        armors_db = os.path.dirname(__file__) + "/csvs/Armors.csv"
-        enchantments_db = os.path.dirname(__file__) + "/csvs/Enchantments.csv"
-
+        reward_db_location = os.path.dirname(__file__) + "/dbs/Reward_DB.csv"
+        item_category_weights_location = os.path.dirname(__file__) + "/configs/item_category_drop_rates.json"
+        player_level_weights_location = os.path.dirname(__file__) + "/configs/loot_level_weights.json"
+    
     list_of_loot = []
     reward_db = read_csv(reward_db_location)
 
-    # we can slightly change the weights probably by adding more weight to one but that can be a later mechanic.
-    # will probably change this into a json file to be imported later instead.
-    ItemCategory_Weights = [{"Category": "Weapon", "Weight": 0.4},
-        {"Category": "Armor", "Weight": 0.4},
-        {"Category": "Blessing", "Weight": 0.2},
-        {"Category": "Consumable", "Weight": 0.6},
-        {"Category": "Accessory", "Weight": 0.5},] # Change this depending if there is a limit to how many magic items a player can equip. (current thought is 5)
+    # Finally added the json file import to make adjustments easier.
+    ItemCategory_Weights = read_json(item_category_weights_location) 
 
     itemType = [lootType['Category'] for lootType in ItemCategory_Weights]
     item_Weights = [lootType['Weight'] for lootType in ItemCategory_Weights]
@@ -294,3 +293,5 @@ def generate_loot(k=3):
                 list_of_loot.append(grab_spell_scroll())
     return list_of_loot
 
+configs = '/home/agave/Repos/dnd_roguelike/configs/item_drop_rates.json'
+print(read_json(configs))
