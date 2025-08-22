@@ -1,92 +1,12 @@
 [
-    {
-        "Level": 1,
-        "Weights": [
-            {"Common" : 1},
-            {"Uncommon" : 0.2},
-            {"Rare": 0},
-            {"Legendary": 0}
-        ]
-    },
-    {
-        "Level": 2,
-        "Weights": [
-            {"Common" : 0.8},
-            {"Uncommon" : 0.4},
-            {"Rare": 0},
-            {"Legendary": 0}
-        ]
-    },
-    {
-        "Level": 3,
-        "Weights": [
-            {"Common" : 0.7},
-            {"Uncommon" : 0.5},
-            {"Rare": 0.1},
-            {"Legendary": 0}
-        ]
-    },
-    {
-        "Level": 4,
-        "Weights": [
-            {"Common" : 0.7},
-            {"Uncommon" : 0.5},
-            {"Rare": 0.2},
-            {"Legendary": 0.1}
-        ]
-    },
-    {
-        "Level": 5,
-        "Weights": [
-            {"Common" : 0.6},
-            {"Uncommon" : 0.6},
-            {"Rare": 0.3},
-            {"Legendary": 0.1}
-        ]
-    },
-    {
-        "Level": 6,
-        "Weights": [
-            {"Common" : 0.5},
-            {"Uncommon" : 0.6},
-            {"Rare": 0.4},
-            {"Legendary": 0.1}
-        ]
-    },
-    {
-        "Level": 7,
-        "Weights": [
-            {"Common" : 0.4},
-            {"Uncommon" : 0.5},
-            {"Rare": 0.4},
-            {"Legendary": 0.2}
-        ]
-    },
-    {
-        "Level": 8,
-        "Weights": [
-            {"Common" : 0.3},
-            {"Uncommon" : 0.5},
-            {"Rare": 0.5},
-            {"Legendary": 0.2}
-        ]
-    },
-    {
-        "Level": 9,
-        "Weights": [
-            {"Common" : 0.2},
-            {"Uncommon" : 0.4},
-            {"Rare": 0.6},
-            {"Legendary": 0.3}
-        ]
-    },
-    {
-        "Level": 10,
-        "Weights": [
-            {"Common" : 0},
-            {"Uncommon" : 0.3},
-            {"Rare": 0.6},
-            {"Legendary": 0.4}
-        ]
-    }
+  {"Level": 1,  "Weights": {"Common": 1.0, "Uncommon": 0.2, "Rare": 0.0, "Legendary": 0.0}},
+  {"Level": 2,  "Weights": {"Common": 0.8, "Uncommon": 0.4, "Rare": 0.0, "Legendary": 0.0}},
+  {"Level": 3,  "Weights": {"Common": 0.7, "Uncommon": 0.5, "Rare": 0.1, "Legendary": 0.0}},
+  {"Level": 4,  "Weights": {"Common": 0.7, "Uncommon": 0.5, "Rare": 0.2, "Legendary": 0.1}},
+  {"Level": 5,  "Weights": {"Common": 0.6, "Uncommon": 0.6, "Rare": 0.3, "Legendary": 0.1}},
+  {"Level": 6,  "Weights": {"Common": 0.5, "Uncommon": 0.6, "Rare": 0.4, "Legendary": 0.1}},
+  {"Level": 7,  "Weights": {"Common": 0.4, "Uncommon": 0.5, "Rare": 0.4, "Legendary": 0.2}},
+  {"Level": 8,  "Weights": {"Common": 0.3, "Uncommon": 0.5, "Rare": 0.5, "Legendary": 0.2}},
+  {"Level": 9,  "Weights": {"Common": 0.2, "Uncommon": 0.4, "Rare": 0.6, "Legendary": 0.3}},
+  {"Level": 10, "Weights": {"Common": 0.0, "Uncommon": 0.3, "Rare": 0.6, "Legendary": 0.4}}
 ]

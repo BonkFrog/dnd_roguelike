@@ -15,12 +15,35 @@ def read_json(json_file_path):
         json_data = json.load(json_file)
     return json_data
 
-def enchant_item(item):
+def get_player_loot_scheme(player_level=1, category="level"):
+    if os.name == 'nt':
+        player_level_weights_location = os.path.dirname(__file__) + "\\configs\\loot_level_weights.json"
+        spell_level_weights_location = os.path.dirname(__file__) + "\\configs\\spell_level_drop_rate.json"
+    if os.name == 'posix':
+        player_level_weights_location = os.path.dirname(__file__) + "/configs/loot_level_weights.json"
+        spell_level_weights_location = os.path.dirname(__file__) + "/configs/spell_level_drop_rate.json"
+
+    if category == "level":
+        loot_weights = read_json(player_level_weights_location)
+    if category == "spell":
+        loot_weights = read_json(spell_level_weights_location)
+
+    for loot_weight in loot_weights:
+        if loot_weight['Level'] == player_level:
+            loot_scheme = loot_weight
+    return loot_scheme
+
+def enchant_item(item, player_level=1):
     if os.name == 'nt':
         enchantments_db = os.path.dirname(__file__) + "\\dbs\\Enchantments.csv"
     if os.name == 'posix':
         enchantments_db = os.path.dirname(__file__) + "/dbs/Enchantments.csv"
-        
+
+    # Get Player loot scheme
+    loot_scheme = get_player_loot_scheme(player_level=player_level)
+    valid_rarities   = [r for r, w in loot_scheme['Weights'].items() if w > 0]
+    valid_weights    = [w for r, w in loot_scheme['Weights'].items() if w > 0]
+
     if "Weapon" == item['Category']:
         item_category = item['Weapon_Type']
     if "Armor" == item['Category']:
@@ -37,23 +60,41 @@ def enchant_item(item):
 
     # will probably change this into a json file to be imported later instead.
     # I had a 1 in the enchantment weights, it didnt produce the enchantments I wanted.
-    enchant_weights = [0.6, 0.3, 0.1]
-    chosen_weight = random.choices(enchant_weights, weights=enchant_weights, k=1)[0]
+    chosen_rarity = random.choices(valid_rarities, weights=valid_weights, k=1)[0]
     enchantment_list = read_csv(enchantments_db)
 
-    if chosen_weight != 1:
+    if chosen_rarity != "Common":
 
-        filtered_enchantments = [enchant for enchant in enchantment_list if float(enchant['Weight']) == float(chosen_weight)]
-        enchantment_weights = [float(enchant['Weight']) for enchant in enchantment_list if float(enchant['Weight']) == float(chosen_weight)]
-        chosen_enchantment = random.choices(filtered_enchantments, weights=enchantment_weights, k=1)[0]
+        filtered_enchantments = [enchant for enchant in enchantment_list if enchant['Rarity'] == chosen_rarity]
+        #enchantment_weights = [float(enchant['Rarity']) for enchant in enchantment_list if enchant['Rarity'] == chosen_rarity]
+        enchant_pool = []
+        enchant_weight = []
+        for f_enchant in filtered_enchantments:
+            if f_enchant['Rarity'] in valid_rarities:
+                match f_enchant['Rarity']:
+                    case "Common":
+                        f_enchant['Rarity'] = valid_weights[0]
+                        enchant_weight.append(valid_weights[0])
+                    case "Uncommon":
+                        f_enchant['Rarity'] = valid_weights[1]
+                        enchant_weight.append(valid_weights[1])
+                    case "Rare":
+                        f_enchant['Rarity'] = valid_weights[2]
+                        enchant_weight.append(valid_weights[2])
+                    case "Legendary":
+                        f_enchant['Rarity'] = valid_weights[3]
+                        enchant_weight.append(valid_weights[3])
+                enchant_pool.append(f_enchant)
+                
+        chosen_enchantment = random.choices(enchant_pool, weights=enchant_weight, k=1)[0]
         while chosen_enchantment['Category'] != item_category:
-            chosen_enchantment = random.choices(filtered_enchantments, weights=enchantment_weights, k=1)[0]
+            chosen_enchantment = random.choices(enchant_pool, weights=enchant_weight, k=1)[0]
 
-    match chosen_weight:
-        case _ if chosen_weight == 1:
+    match chosen_rarity:
+        case _ if chosen_rarity == "Common":
             item['name'] = item['name'] + " +1"
             return item
-        case _ if chosen_weight == 0.6:
+        case _ if chosen_rarity == "Uncommon":
             Item_Rarity = random.randint(0,1)
             if Item_Rarity == 0:
                 item['name'] = item['name'] + " +1"
@@ -61,7 +102,7 @@ def enchant_item(item):
             else:
                 add_affix(item, chosen_enchantment)
                 return item
-        case _ if chosen_weight == 0.3:
+        case _ if chosen_rarity == "Rare":
             Item_Rarity = random.randint(0,1)
             if Item_Rarity == 0:
                 item['name'] = item['name'] + " +2"                    
@@ -70,7 +111,7 @@ def enchant_item(item):
                 add_affix(item, chosen_enchantment)
                 item['name'] = item['name'] + " +1"
                 return item
-        case _ if chosen_weight == 0.1:
+        case _ if chosen_rarity == "Legendary":
             Item_Rarity = random.randint(0,1)
             if Item_Rarity == 0:
                 item['name'] = item['name'] + " +3"                    
@@ -80,29 +121,23 @@ def enchant_item(item):
                 item['name'] = item['name'] + " +2"
                 return item
 
-def grab_spell_scroll():
+def grab_spell_scroll(player_level):
     if os.name == 'nt':
         spell_db = os.path.dirname(__file__) + "\\dbs\\Spells.csv"
     if os.name == 'posix':
         spell_db = os.path.dirname(__file__) + "/dbs/Spells.csv"
 
     # will probably change this into a json file to be imported later instead.
-    spell_weights_legend = [
-        {"Level": 0, "Weight": 0.6},
-        {"Level": 1, "Weight": 0.7},
-        {"Level": 2, "Weight": 0.6},
-        {"Level": 3, "Weight": 0.5},
-        {"Level": 4, "Weight": 0.4},
-        {"Level": 5, "Weight": 0.2},
-        {"Level": 6, "Weight": 0.1},
-        {"Level": 7, "Weight": 0.05},
-        {"Level": 8, "Weight": 0.025},
-        {"Level": 9, "Weight": 0.001}
-    ]
+    spell_weights_legend = get_player_loot_scheme(player_level=player_level, category="spell")
+    
+    valid_level = [r for r, w in spell_weights_legend['Weights'].items() if w > 0]
+    valid_weights = [w for r, w in spell_weights_legend['Weights'].items() if w > 0]
+    valid_amount = [a for a in spell_weights_legend['Amounts'].values() if int(a) > 0]
+
     # Pull randomized item weights for spell levels
-    spell_weights = [float(spell_type["Weight"]) for spell_type in spell_weights_legend]
-    spell_levels = [spell_type["Level"] for spell_type in spell_weights_legend]
-    selected_spell_level = random.choices(spell_levels, weights=spell_weights, k=1)[0]
+    #spell_weights = [float(spell_type["Weight"]) for spell_type in spell_weights_legend]
+    #spell_levels = [spell_type["Level"] for spell_type in spell_weights_legend]
+    selected_spell_level = random.choices(valid_level, weights=valid_weights, k=1)[0]
 
     # Grab a random spell within the chosen spell level
     spells = read_csv(spell_db)
@@ -116,9 +151,13 @@ def grab_spell_scroll():
     # Add Scroll Mechanics in the description.
     scroll_description = "You can cast the inscribed spell on this scroll with the inscribed spell's cast time. Any class can cast the spell. If the spell requires a ability modifier or saving throw (8 + ability modifier), use the following ability modifier: WIS, CHA, INT. Once casted, the scroll embers away."
     selected_spell.update({"scroll_description": scroll_description})
+    
+    index = valid_level.index(selected_spell_level)
+    spell_scroll_amount = valid_amount[index]
+    selected_spell.update({"Amount": spell_scroll_amount})
     return selected_spell
 
-def grab_consumable():
+def grab_consumable(player_level):
     #This function does not include spell scrolls despite both being a consumable.
     if os.name == 'nt':
         reward_db_location = os.path.dirname(__file__) + "\\dbs\\Reward_DB.csv"
@@ -127,8 +166,30 @@ def grab_consumable():
 
     reward_db = read_csv(reward_db_location)
 
+    # Get the player's loot scheme.
+    loot_scheme = get_player_loot_scheme(player_level=player_level)
+    valid_rarities   = [r for r, w in loot_scheme['Weights'].items() if w > 0]
+    valid_weights    = [w for r, w in loot_scheme['Weights'].items() if w > 0]
+    
+    # Generate loot_pool based on character level.
+    item_pool = []
+    for item in reward_db:
+        if item['Rarity'] in valid_rarities:
+            match item['Rarity']:
+                case "Common":
+                    item['Rarity'] = valid_weights[0]
+                case "Uncommon":
+                    item['Rarity'] = valid_weights[1]
+                case "Rare":
+                    item['Rarity'] = valid_weights[2]
+                case "Legendary":
+                    item['Rarity'] = valid_weights[3]
+            item_pool.append(item)
+
+    reward_db = item_pool
+
     consumables = [item for item in reward_db if item['Category'] == "Consumable"]
-    consumable_weight = [float(item["Weight"]) for item in reward_db if item['Category'] == "Consumable"]
+    consumable_weight = [float(item["Rarity"]) for item in reward_db if item['Category'] == "Consumable"]
     selected_consumable = random.choices(consumables, weights=consumable_weight, k=1)[0]
     return selected_consumable
 
@@ -193,7 +254,7 @@ def generate_consumables(k=3,mix=True,consumable=False,spell=False):
             list_of_loot.append(grab_spell_scroll())
     return list_of_loot
 
-def generate_weapons(k=1,enchant=False):
+def generate_weapons(k=1,enchant=False, player_level=1):
     if os.name == 'nt':
         weapon_db = os.path.dirname(__file__) + "\\dbs\\Weapons.csv"
     if os.name == 'posix':
@@ -204,16 +265,17 @@ def generate_weapons(k=1,enchant=False):
     if k == 1:
         selected_weapon = random.choice(weapons)
         if enchant == True:
-            return enchant_item(selected_weapon)
+            return enchant_item(selected_weapon, player_level=player_level)
         return selected_weapon
-
+    
+    weapons = random.sample(weapons, k=min(k, len(weapons)))
     list_of_loot = [] 
-    for i in range(0,k):
-        selected_weapon = random.choice(weapons)
+    for selected_weapon in weapons:
         if enchant == True: 
-            list_of_loot.append(enchant_item(selected_weapon))
+            enchanted = enchant_item(selected_weapon, player_level=player_level)
+            list_of_loot.append(enchanted)
         else:
-            list_of_loot.append(enchant_item(selected_weapon))
+            list_of_loot.append(enchant_item(selected_weapon, player_level=player_level))
     return list_of_loot
 
 def generate_armors(k=1,enchant=False):
@@ -229,9 +291,9 @@ def generate_armors(k=1,enchant=False):
             return enchant_item(selected_armors)
         return selected_armors
 
+    armors = random.sample(armors, k=min(k, len(armors)))
     list_of_loot = [] 
-    for i in range(0,k):
-        selected_armors = random.choice(armors)
+    for selected_armors in armors:
         if enchant == True: 
             list_of_loot.append(enchant_item(selected_armors))
         else:
@@ -255,22 +317,45 @@ def generate_loot(player_level=1, k=3):
     reward_db = read_csv(reward_db_location)
 
     # Finally added the json file import to make adjustments easier.
+    # Grab the loot category
     ItemCategory_Weights = read_json(item_category_weights_location) 
-
     itemType = [lootType['Category'] for lootType in ItemCategory_Weights]
     item_Weights = [lootType['Weight'] for lootType in ItemCategory_Weights]
-
     generated_loot_types = random.choices(itemType, weights=item_Weights, k=k)
+
+    # Get the player's loot scheme.
+    loot_scheme = get_player_loot_scheme(player_level=player_level)
+    valid_rarities   = [r for r, w in loot_scheme['Weights'].items() if w > 0]
+    valid_weights    = [w for r, w in loot_scheme['Weights'].items() if w > 0]
+    
+    # Generate loot_pool based on character level.
+    item_pool = []
+    for item in reward_db:
+        if item['Rarity'] in valid_rarities:
+            match item['Rarity']:
+                case "Common":
+                    item['Rarity'] = valid_weights[0]
+                case "Uncommon":
+                    item['Rarity'] = valid_weights[1]
+                case "Rare":
+                    item['Rarity'] = valid_weights[2]
+                case "Legendary":
+                    item['Rarity'] = valid_weights[3]
+            item_pool.append(item)
+
+    #rename reward_db to the effective loot pool.
+    reward_db = item_pool
+
     for loot_type in generated_loot_types:
         if loot_type == "Accessory":
             accessories = [item for item in reward_db if item['Category'] == "Accessory"]
-            accessories_weights = [float(item['Weight']) for item in accessories]
+            accessories_weights = [float(item['Rarity']) for item in accessories]
             accessory = random.choices(accessories, weights=accessories_weights, k=1)[0]
             list_of_loot.append(accessory)
 
         if loot_type == "Blessing":
             blessings = [item for item in reward_db if item['Category'] == "Blessing"]
-            blessing_weights = [float(item['Weight']) for item in blessings]
+            blessing_weights = [float(item['Rarity']) for item in blessings]
             blessing = random.choices(blessings, weights=blessing_weights, k=1)[0]
             list_of_loot.append(blessing)
 
@@ -288,10 +373,13 @@ def generate_loot(player_level=1, k=3):
             consumable_type = [item_type["Category"] for item_type in consumable_type]
             item_type = random.choices(consumable_type, weights=consumable_weight)[0]
             if item_type == "Consumable":
-                list_of_loot.append(grab_consumable())
+                list_of_loot.append(grab_consumable(player_level))
             else:
                 list_of_loot.append(grab_spell_scroll())
     return list_of_loot
+'''
+loot = generate_loot()
+for l in loot:
+    print(l['name'])'''
 
-configs = '/home/agave/Repos/dnd_roguelike/configs/item_drop_rates.json'
-print(read_json(configs))
+print(grab_spell_scroll(1))
