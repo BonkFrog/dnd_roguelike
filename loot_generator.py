@@ -149,7 +149,7 @@ def grab_spell_scroll(player_level):
     selected_spell['name'] = spell_scroll_name
 
     # Add Scroll Mechanics in the description.
-    scroll_description = "You can cast the inscribed spell on this scroll with the inscribed spell's cast time. Any class can cast the spell. If the spell requires a ability modifier or saving throw (8 + ability modifier), use the following ability modifier: WIS, CHA, INT. Once casted, the scroll embers away."
+    scroll_description = "As an Action you can rip the scroll to cast the inscribed spell on this scroll regardless of the inscribed spell's cast time.\nAny class can cast the spell. If the spell requires a ability modifier or saving throw (8 + ability modifier), use the following ability modifier: WIS, CHA, INT. Once casted, the scroll embers away."
     selected_spell.update({"scroll_description": scroll_description})
     
     index = valid_level.index(selected_spell_level)
@@ -275,10 +275,10 @@ def generate_weapons(k=1,enchant=False, player_level=1):
             enchanted = enchant_item(selected_weapon, player_level=player_level)
             list_of_loot.append(enchanted)
         else:
-            list_of_loot.append(enchant_item(selected_weapon, player_level=player_level))
+            list_of_loot.append(selected_weapon)
     return list_of_loot
 
-def generate_armors(k=1,enchant=False):
+def generate_armors(k=1,enchant=False, player_level=1):
     if os.name == 'nt':
         armors_db = os.path.dirname(__file__) + "\\dbs\\Armors.csv"
     if os.name == 'posix':
@@ -295,9 +295,9 @@ def generate_armors(k=1,enchant=False):
     list_of_loot = [] 
     for selected_armors in armors:
         if enchant == True: 
-            list_of_loot.append(enchant_item(selected_armors))
+            list_of_loot.append(enchant_item(selected_armors, player_level=player_level))
         else:
-            list_of_loot.append(enchant_item(selected_armors))
+            list_of_loot.append(selected_armors)
     return list_of_loot
 
 # Milestone: Lets add some character level logic in next time. because this shit is way over powered for lower levels!
@@ -360,10 +360,10 @@ def generate_loot(player_level=1, k=3):
             list_of_loot.append(blessing)
 
         if loot_type == "Weapon":
-            list_of_loot.append(generate_weapons(k=1, enchant=True))
+            list_of_loot.append(generate_weapons(k=1, enchant=True, player_level=player_level))
 
         if loot_type == "Armor":
-            list_of_loot.append(generate_armors(k=1, enchant=True))
+            list_of_loot.append(generate_armors(k=1, enchant=True, player_level=player_level))
 
         if loot_type == "Consumable":
             # Want to randomize between spell scrolls and consumables.
@@ -375,11 +375,82 @@ def generate_loot(player_level=1, k=3):
             if item_type == "Consumable":
                 list_of_loot.append(grab_consumable(player_level))
             else:
-                list_of_loot.append(grab_spell_scroll())
+                list_of_loot.append(grab_spell_scroll(player_level))
     return list_of_loot
-'''
-loot = generate_loot()
-for l in loot:
-    print(l['name'])'''
 
-print(grab_spell_scroll(1))
+def spacing(tuple_array, spacing = 2):
+    str_count = [len(item[0]) for item in tuple_array if item != "New Line"]
+    
+    text_array = []
+    for item in tuple_array:
+        if item == "New Line":
+            text_array.append("")
+            continue
+        if len(item) > 2:
+            spacing = item[-1]
+        max_spaces = max(str_count) + spacing
+        text_array.append(f"{item[0]}".ljust(max_spaces) + "|  " + f"{item[1]}")
+    return text_array
+
+generated_loot = generate_loot(player_level=7)
+
+print("---Generated Loot Names---")
+print("```")
+loot_tuple = []
+for loot in generated_loot:
+    loot_tuple.append((loot['name'], loot['Category'], 2))
+
+printables = spacing(loot_tuple)
+print("\n".join([line for line in printables]))
+print("```")
+print("------------------------------")
+for loot in generated_loot:
+    print("```")
+    loot_tuple = []
+    loot_tuple.append(("Name", loot['name']))
+    if loot['Category'] == "Armor":
+        loot_tuple.append(('Armor Type', loot['armor_type'], 2))
+        loot_tuple.append(('AC', loot['AC'], 2))
+        if "enchant_description" in loot:
+            loot_tuple.append(("Enchantment", loot['enchant_description'], 2))
+    
+    if loot['Category'] == "Weapon":
+        loot_tuple.append(('Weapon Type', loot['Weapon_Type'], 2))
+        loot_tuple.append(('Properties', loot['Properties'],2))
+        loot_tuple.append(('Damage', loot['Damage'], 2))
+        if "enchantment_description" in loot:
+            loot_tuple.append(("Enchantment", loot['enchant_description']), 2)
+        loot_tuple.append(('Mastery', loot['Mastery'], 2))
+        loot_tuple.append(('Mastery Description', loot['Mastery Definition'], 2))
+    
+    if loot['Category'] in ["Blessing", "Consumable", "Accessory"]:
+        loot_tuple.append(("Item Type", loot['Category'], 2))
+        if (loot["Amount"] != "") and (loot['Category'] != "Blessing"):
+            loot_tuple.append(("Amount", loot['Amount'], 2))
+        loot_tuple.append(("Effect", loot['Definition'], 2))
+        
+    if loot['Category'] == "spell":
+        loot_tuple.append(("Item Type", "Consumable", 2))
+        loot_tuple.append(('Level', loot['level'], 2))
+        loot_tuple.append(("Amount", loot['Amount'], 2))
+        loot_tuple.append(('Class', loot['classes'], 2))
+        loot_tuple.append(("Cast Time", loot['cast_time'], 2))
+        loot_tuple.append(("Range", loot['range'], 2))
+        loot_tuple.append(("Duration", loot['duration'], 2))
+        
+        spell_cast_requirement = []
+        if loot['verbal'] == 1:
+            spell_cast_requirement.append("Verbal")
+        if loot['somatic'] == 1:
+            spell_cast_requirement.append("Somatic")
+        
+        loot_tuple.append(("Components", ",".join(spell_cast_requirement), 2))
+        loot_tuple.append(('Scroll Effect', loot['scroll_description'], 2))
+        loot_tuple.append("New Line")
+        loot_tuple.append(("Effect", loot['description'], 2))
+
+    printables = spacing(loot_tuple)
+    print("\n".join([line for line in printables]))
+    print("```")
+    print()
+print()
