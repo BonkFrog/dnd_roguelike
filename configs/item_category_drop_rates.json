@@ -1,7 +1,7 @@
 [
-    {"Category": "Weapon", "Weight": 0.4},
-    {"Category": "Armor", "Weight": 0.4},
+    {"Category": "Weapon", "Weight": 0.2},
+    {"Category": "Armor", "Weight": 0.2},
     {"Category": "Blessing", "Weight": 0.2},
-    {"Category": "Consumable", "Weight": 0.6},
+    {"Category": "Consumable", "Weight": 0.8},
     {"Category": "Accessory", "Weight": 0.5}
 ]

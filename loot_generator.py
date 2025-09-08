@@ -392,7 +392,7 @@ def spacing(tuple_array, spacing = 2):
         text_array.append(f"{item[0]}".ljust(max_spaces) + "|  " + f"{item[1]}")
     return text_array
 
-generated_loot = generate_loot(player_level=7)
+generated_loot = generate_loot(player_level=1)
 
 print("---Generated Loot Names---")
 print("```")
